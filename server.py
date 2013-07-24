@@ -18,13 +18,16 @@ class MyHandler(BaseHTTPRequestHandler):
 
 	    if self.path.endswith(".fits"):
 		file_mime_type = "application/force-download"
-		file = curdir + sep + 'fits' + sep + os.path.basename (self.path)
+		if os.path.exists (self.path):
+		    file = self.path
+		else:
+		    file = curdir + sep + 'fits' + sep + os.path.basename (self.path)
 		file_size = os.path.getsize(file)
 
 		self.send_response(200)
 		self.send_header('Content-Description', 'File Transfer')
 		self.send_header('Content-Type', '%s' % file_mime_type)
-		self.send_header('Content-Disposition',  'attachment; filename=%s' % os.path.basename(self.path))
+		self.send_header('Content-Disposition',  'attachment; filename=%s' % os.path.basename (self.path))
 		self.send_header('Content-Transfer-Encoding', 'binary')
 		self.send_header('Expires', '0')
 		self.send_header('Cache-Control',  'must-revalidate, post-check=0, pre-check=0')
@@ -104,8 +107,8 @@ def main():
     except KeyboardInterrupt:
         print '^C received, shutting down server'
 	t = 0
-	while active_count () > 1:
-	    n = active_count ()
+	while activeCount () > 1:
+	    n = activeCount ()
 	    print 'n=%d<br>' % (n)
 	    sys.stdout.flush()
 	    time.sleep (1)
